@@ -4,6 +4,7 @@ from discord.ext import commands
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 client = commands.Bot(command_prefix = "!", intents=intents)
 
@@ -12,34 +13,19 @@ async def on_ready():
     print("Bot encendido")
 
 @client.command()
-async def sens(ctx):
-    base = float(input("Starting sensivity: "))
-    porc_low = 0.5
-    porc_high = 1.5
-    iterator = 0
-    while(iterator < 5):
-        lower = round(base * porc_low,2)
-        higher = round(base * porc_high,2)
-        print("\nLower Base Higher\n"+str(lower)+" "+str(base)+" "+str(higher))
-        resp = int(input("\n1) Lower\n2) Higher\n"))
-        if(resp == 1):
-            base = round((base + lower)/2,2)
-        if(resp == 2):
-            base = round((base + higher)/2,2)
-        porc_low += 0.1
-        porc_high -= 0.1
-        iterator +=1
-    porc_low = round(porc_low)-0.05
-    porc_high = round(porc_high)+0.05
-    lower = round(base * porc_low,2)
-    higher = round(base * porc_high,2)
-    print("\nLower Base Higher\n"+str(lower)+" "+str(base)+" "+str(higher))
-    resp = int(input("\n1) Lower\n2) Higher\n"))
-    if(resp == 1):
-        base = round((base + lower)/2,2)
-        print("Perfect Sensitivity: "+str(base))
-    if(resp == 2):
-        base = round((base + higher)/2,2)
-        print("Perfect Sensitivity: "+str(base))
+async def sens(ctx, base: float, member: discord.Member = None):
+    member = ctx.author
+    name = member.display_name
+    icon = member.display_avatar
+
+    embed = discord.Embed(title = f"Starting sensivity: {base}",description = "Iteration 1",colour = discord.Color.random())
+    embed.set_author(name = "PSA method", icon_url = "https://cdn.iconscout.com/icon/free/png-256/computer-mouse-1500503-1271148.png")
+    embed.set_thumbnail(url = icon)
+    embed.add_field(name = "Lower", value = "0.75")
+    embed.add_field(name = "Base", value = base, inline = True)
+    embed.add_field(name = "Higher", value = "2.25", inline = True)
+    embed.set_footer(text = f"for {name}")
+
+    await ctx.send(embed=embed)
 
 client.run(token_bot)
